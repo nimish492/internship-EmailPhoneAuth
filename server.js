@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const twilio = require('twilio');
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
 const bcrypt = require('bcryptjs');
@@ -25,15 +24,10 @@ const userEmailVerification = new mongoose.Schema({
   emailToken: String
 });
 
-const userphoneVerification = new mongoose.Schema({
-  phone: { type: String, unique: true },
-  phoneVerified: { type: Boolean, default: false },
-  phoneToken: String
-});
+
 
 const userDetailsSchema = new mongoose.Schema({
   email: { type: String, unique: true },
-  phone: { type: String, unique: true },
   username: {
     type: String,
     minlength: 8,
@@ -62,13 +56,8 @@ const userDetailsSchema = new mongoose.Schema({
 });
 
 const emailVerification = mongoose.model('emailVerification', userEmailVerification);
-const phoneVerification = mongoose.model('phoneVerification', userphoneVerification);
 const UserDetails = mongoose.model('userDetails', userDetailsSchema);
 
-// Twilio setup
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = twilio(accountSid, authToken);
 
 // Nodemailer setup
 const transporter = nodemailer.createTransport({
@@ -149,51 +138,6 @@ app.post('/register-email', async (req, res) => {
 
 
 
-// Phone registration route (updated)
-app.post('/register-phone', async (req, res) => {
-  const { phone, email } = req.body;
-  const phoneToken = generateOtp();
-
-  try {
-    const user = await phoneVerification.findOneAndUpdate(
-      { phone },
-      { phone, phoneToken, phoneVerified: false },
-      { upsert: true, new: true }
-    );
-
-    console.log('Phone Verification Document:', user);
-
-    const existingDocument = await UserDetails.findOne({ email });
-    if (existingDocument) {
-      existingDocument.phone = phone;
-      await existingDocument.save();
-      console.log('Updated Document3 after phone registration:', existingDocument);
-    } else {
-      const newDocument = new UserDetails({ email, phone });
-      await newDocument.save();
-      console.log('New Document3 created after phone registration:', newDocument);
-    }
-
-    // Use Twilio Verify service to send OTP
-    client.verify.v2.services("VAc331eae103e7eaeb9c8097a6c074e207")
-      .verifications
-      .create({ to: `+${phone}`, channel: 'sms' })
-      .then(verification => {
-        console.log('OTP sent:', verification.sid);
-        return res.status(200).json({ phone });
-      })
-      .catch(err => {
-        console.log('Error sending OTP via Twilio:', err);
-        return res.status(500).send('Error sending OTP.');
-      });
-  } catch (err) {
-    console.error('Error registering phone:', err);
-    res.status(500).send('Error registering phone.');
-  }
-});
-
-
-
 
 
 
@@ -212,7 +156,7 @@ app.post('/verify-email', async (req, res) => {
     user.emailToken = null; // Clear the token once it is used
     await user.save();
 
-  
+
 
     // Delete document1
     await emailVerification.findByIdAndDelete(user._id);
@@ -226,36 +170,11 @@ app.post('/verify-email', async (req, res) => {
 
 
 
-// Phone verification route
-app.post('/verify-phone', async (req, res) => {
-  const { phoneToken } = req.body;
-  try {
-    const user = await phoneVerification.findOne({ phoneToken });
-
-    if (!user) {
-      return res.status(400).send('Invalid verification code.');
-    }
-
-    // Update phone verification status
-    user.phoneVerified = true;
-    user.phoneToken = null; // Clear the token once it is used
-    await user.save();
-
-    // Find document3 and update with phone field
-    // Delete document2
-    await phoneVerification.findByIdAndDelete(user._id);
-
-    res.send('Phone verified successfully.');
-  } catch (err) {
-    console.error('Error verifying phone:', err);
-    res.status(500).send('Error verifying phone.');
-  }
-});
 
 
 // Set login details route
 app.post('/set-login-details', async (req, res) => {
-  const { username, password, email, phone } = req.body;
+  const { username, password, email } = req.body;
 
   try {
     // Append username and password to document3
@@ -315,44 +234,7 @@ app.post('/resend-email-otp', async (req, res) => {
   }
 });
 
-// Resend OTP for phone route
-app.post('/resend-phone-otp', async (req, res) => {
-  const { email } = req.body;
-  const phoneToken = generateOtp();
 
-  try {
-    const user = await phoneVerification.findOneAndUpdate(
-      { email },
-      { phoneToken }
-    );
-
-    console.log('Phone Verification Document:', user);
-
-    if (!user) {
-      return res.status(404).json({ message: 'Email not registered.' });
-    }
-
-    // Resend SMS verification
-    client.messages.create({
-      body: `Your verification code is ${phoneToken}`,
-      to: user.phone,
-      from: process.env.TWILIO_PHONE_NUMBER,
-    })
-      .then(message => {
-        console.log('Phone OTP resent:', message.sid);
-        console.log('Phone Verification Document:', user);
-        return res.status(200).json({ phone: user.phone });
-        
-      })
-      .catch(err => {
-        console.error('Error resending phone OTP:', err);
-        return res.status(500).send('Error resending phone OTP.');
-      });
-  } catch (err) {
-    console.error('Error resending phone OTP:', err);
-    res.status(500).send('Error resending phone OTP.');
-  }
-});
 
 // Server listening
 const port = process.env.PORT || 3000;

@@ -45,43 +45,7 @@
             <div id="countdownDisplay"></div>
             <span id="emailMessage"></span>
             <button id="resendEmailOtp" class="btn-otp-secondary">Resend OTP</button>
-            
-        </div>
 
-        <div class="container" id="phoneSection" style="display: none;">
-            <h3 class="section-title"><span class="section-number">04</span>Mobile Number</h3>
-            <hr>
-            <form id="phoneRegistrationForm">
-                <label for="phone">MOBILE NUMBER*</label>
-                <div class="form-with-button">
-                    <div class="phone-input-container">
-                        <input type="text" id="countryCode" name="countryCode" value="+91" readonly>
-                        <input type="tel" id="phone" name="phone" class="input-field" placeholder="Mobile Number"
-                            maxlength=10 required>
-                    </div>
-                    <button type="submit" id="sendCode2" class="btn">Send verification code</button>
-
-                </div>
-            </form>
-            <span id="phoneVerified" class="verified-message" style="display: none;">✔ Verified</span>
-        </div>
-
-        <div class="container-otp" id="phoneVerificationSection" style="display: none;">
-            <h2>Mobile Number Verification</h2>
-            <hr>
-            <p class="otp-text">A verification code has been sent to your mobile number. Please enter it below:</p>
-            <div id="phoneOtpInputs" class="otp-container">
-                <input type="text" maxlength="1" class="otp-input" id="phoneOtp1">
-                <input type="text" maxlength="1" class="otp-input" id="phoneOtp2">
-                <input type="text" maxlength="1" class="otp-input" id="phoneOtp3">
-                <input type="text" maxlength="1" class="otp-input" id="phoneOtp4">
-                <input type="text" maxlength="1" class="otp-input" id="phoneOtp5">
-                <input type="text" maxlength="1" class="otp-input" id="phoneOtp6">
-            </div>
-            <button id="verifyPhone" class="btn">Verify Mobile Number</button>
-            <div id="countdownDisplay"></div>
-            <span id="phoneMessage"></span>
-            <button id="resendPhoneOtp" class="btn-otp-secondary">Resend OTP</button>
         </div>
 
         <div class="container-login-details" id="loginDetailsSection" style="display: none;">
@@ -112,9 +76,6 @@
             </form>
         </div>
 
-        <div class="continuebutton">
-            <button id="continueToPhone" class="btn-secondary">Continue</button>
-        </div>
 
         <div class="continuebutton">
             <button id="continueToLoginDetails" class="btn-secondary">Continue</button>
@@ -122,11 +83,11 @@
         <div class="continuebutton">
             <button id="continueToLogin" class="btn-secondary">Continue</button>
         </div>
-        
+
     </div>
 
 
-    
+
 
 
     <script src="scripts.js"></script>

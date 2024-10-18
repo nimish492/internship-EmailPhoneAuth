@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     initialEmail();
-    initialPhone();
+    //  initialPhone();
     initialLoginValidation();
 });
 
@@ -11,35 +11,26 @@ function initialEmail() {
     const emailSection = document.getElementById('emailSection');
     const emailVerificationSection = document.getElementById('emailVerificationSection');
     const emailOtpInputs = document.querySelectorAll('#emailVerificationSection input[id^="emailOtp"]');
-    const continueToPhoneButton = document.getElementById('continueToPhone');
     const continueToLoginDetailsButton = document.getElementById('continueToLoginDetails');
     const sendCodeButton = document.getElementById('sendCode1');
     const emailInput = document.getElementById('email');
-    const phoneSection = document.getElementById('phoneSection');
-    const phoneVerificationSection = document.getElementById('phoneVerificationSection');
-    const sendCodeButton2 = document.getElementById('sendCode2');
-    const verifyPhoneButton = document.getElementById('verifyPhone');
-    const phoneOtpInputs = document.querySelectorAll('#phoneVerificationSection input[id^="phoneOtp"]');
     const phoneInput = document.getElementById('phone');
     const loginDetailsSection = document.getElementById('loginDetailsSection');
-    const phoneForm = document.getElementById('phoneRegistrationForm');
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
     const usernameFeedback = document.getElementById('username-feedback');
     const passwordFeedback = document.getElementById('password-feedback');
     const continueToLoginButton = document.getElementById('continueToLogin');
     const resendEmail = document.getElementById('resendEmailOtp');
-    const resendPhone = document.getElementById('resendPhoneOtp')
+
 
 
     let enteredEmail = '';
     let emailVerified = false;
-    let enteredPhone = '';
-    let phoneVerified = false;
 
 
 
-    continueToPhoneButton.style.display = 'none';
+
     continueToLoginDetailsButton.style.display = 'none';
     continueToLoginButton.style.display = 'none';
 
@@ -58,7 +49,6 @@ function initialEmail() {
                     emailSection.style.display = 'none';
                     emailVerificationSection.style.display = 'block';
                     emailInput.disabled = true;
-                    continueToPhoneButton.style.display = 'none';
                     continueToLoginDetailsButton.style.display = 'none';
                     continueToLoginButton.style.display = 'none';
                 } else {
@@ -95,8 +85,7 @@ function initialEmail() {
                     emailInput.value = enteredEmail;
                     emailInput.disabled = true;
                     emailVerified = true;
-                    continueToPhoneButton.style.display = 'block';
-                    continueToLoginDetailsButton.style.display = 'none';
+                    continueToLoginDetailsButton.style.display = 'block';
                     continueToLoginButton.style.display = 'none';
                 } else {
                     alert('Incorrect OTP. Please try again.');
@@ -165,15 +154,15 @@ function initialEmail() {
             .catch(error => console.error('Error:', error));
     });
 
-    continueToPhoneButton.addEventListener('click', function () {
+    continueToLoginDetailsButton.addEventListener('click', function () {
         if (sendCodeButton.style.display !== 'none') {
-            alert('Verify your Email first');
+            alert('Verify your email first');
         } else {
-            emailSection.style.display = 'none';
-            phoneSection.style.display = 'block';
-            continueToPhoneButton.style.display = 'none';
+            loginDetailsSection.style.display = 'block';
             continueToLoginDetailsButton.style.display = 'none';
-            continueToLoginButton.style.display = 'none';
+            continueToLoginButton.style.display = 'block';
+            emailSection.style.display = 'none';
+            emailVerificationSection.style.display = 'none';
 
         }
     });
@@ -364,8 +353,7 @@ function initialLoginValidation() {
     const continueToLoginButton = document.getElementById('continueToLogin');
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
-    const emailInput = document.getElementById('email'); // Assuming this is accessible
-    const phoneInput = document.getElementById('phone'); // Assuming this is accessible
+    const emailInput = document.getElementById('email');
     const passwordMatchMessage = document.getElementById('password-match-message');
     const confirmPasswordInput = document.getElementById('confirmPassword');
 
@@ -510,8 +498,7 @@ function initialLoginValidation() {
         const username = usernameInput.value.trim();
         const password = passwordInput.value.trim();
         const confirmPassword = confirmPasswordInput.value.trim();
-        const enteredEmail = emailInput.value.trim(); // Ensure you have access to enteredEmail here
-        const enteredPhone = phoneInput.value.trim(); // Ensure you have access to enteredPhone here
+        const enteredEmail = emailInput.value.trim();
 
         const errors = [];
 
@@ -549,7 +536,7 @@ function initialLoginValidation() {
         fetch('/set-login-details', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password, email: enteredEmail, phone: enteredPhone })
+            body: JSON.stringify({ username, password, email: enteredEmail })
         })
             .then(response => response.json())
             .then(data => {
