@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function initialEmail() {
-
+    const headingSection = document.getElementById('heading');
     const emailForm = document.getElementById('emailRegistrationForm');
     const verifyEmailButton = document.getElementById('verifyEmail');
     const emailSection = document.getElementById('emailSection');
@@ -33,6 +33,7 @@ function initialEmail() {
 
     continueToLoginDetailsButton.style.display = 'none';
     continueToLoginButton.style.display = 'none';
+    headingSection.style.display = 'block';
 
     sendCodeButton.addEventListener('click', function (event) {
         event.preventDefault();
@@ -51,6 +52,7 @@ function initialEmail() {
                     emailInput.disabled = true;
                     continueToLoginDetailsButton.style.display = 'none';
                     continueToLoginButton.style.display = 'none';
+                    headingSection.style.display = 'none';
                 } else {
                     alert('Error sending verification code. Please try again.');
                 }
@@ -87,6 +89,7 @@ function initialEmail() {
                     emailVerified = true;
                     continueToLoginDetailsButton.style.display = 'block';
                     continueToLoginButton.style.display = 'none';
+                    headingSection.style.display = 'none';
                 } else {
                     alert('Incorrect OTP. Please try again.');
                 }
@@ -163,6 +166,7 @@ function initialEmail() {
             continueToLoginButton.style.display = 'block';
             emailSection.style.display = 'none';
             emailVerificationSection.style.display = 'none';
+            headingSection.style.display = 'none';
 
         }
     });
@@ -351,11 +355,13 @@ function initialPhone() {
 
 function initialLoginValidation() {
     const continueToLoginButton = document.getElementById('continueToLogin');
+    const headingSection = document.getElementById('heading');
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
     const emailInput = document.getElementById('email');
     const passwordMatchMessage = document.getElementById('password-match-message');
     const confirmPasswordInput = document.getElementById('confirmPassword');
+
 
     // Initial text for conditions
     const initialText1 = 'Must not contain any special characters or spaces.';
