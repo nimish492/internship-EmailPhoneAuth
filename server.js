@@ -149,62 +149,49 @@ app.post('/register-email', async (req, res) => {
 
 
 
-// Phone registration route
+// Phone registration route (updated)
 app.post('/register-phone', async (req, res) => {
-  const { phone, email } = req.body; // Ensure both phone and email are passed
+  const { phone, email } = req.body;
   const phoneToken = generateOtp();
 
-  // Log the request body to check if it contains the correct data
-  console.log('Register Phone Request Body:', req.body);
-
   try {
-    // Update or create the phone verification document
     const user = await phoneVerification.findOneAndUpdate(
       { phone },
       { phone, phoneToken, phoneVerified: false },
       { upsert: true, new: true }
     );
 
-    // Log the phone verification document to ensure it has been created/updated correctly
     console.log('Phone Verification Document:', user);
 
-    // Check if a document with the email already exists
     const existingDocument = await UserDetails.findOne({ email });
-
     if (existingDocument) {
-      // Update the existing document with the phone number
       existingDocument.phone = phone;
       await existingDocument.save();
-
-      // Log the updated document
       console.log('Updated Document3 after phone registration:', existingDocument);
     } else {
-      // Create a new document with both email and phone
       const newDocument = new UserDetails({ email, phone });
       await newDocument.save();
-
-      // Log the new document
       console.log('New Document3 created after phone registration:', newDocument);
     }
 
-     // Use Twilio Verify service to send OTP
-     client.verify.v2.services("VA071457fbd8ea122e0ff19d70a2ee2c79")
-     .verifications
-     .create({ to: `+${phone}`, channel: 'sms' })
-     .then(verification => {
-       console.log('OTP sent:', verification.sid);
-       return res.status(200).json({ phone });
-     })
-     .catch(err => {
-       console.error('Error sending OTP via Twilio:', err);
-       return res.status(500).send('Error sending OTP.');
-     });
- } catch (err) {
-   console.error('Error registering phone:', err);
-   res.status(500).send('Error registering phone.');
- }
-
+    // Use Twilio Verify service to send OTP
+    client.verify.v2.services("VAc331eae103e7eaeb9c8097a6c074e207")
+      .verifications
+      .create({ to: `+${phone}`, channel: 'sms' })
+      .then(verification => {
+        console.log('OTP sent:', verification.sid);
+        return res.status(200).json({ phone });
+      })
+      .catch(err => {
+        console.log('Error sending OTP via Twilio:', err);
+        return res.status(500).send('Error sending OTP.');
+      });
+  } catch (err) {
+    console.error('Error registering phone:', err);
+    res.status(500).send('Error registering phone.');
+  }
 });
+
 
 
 
